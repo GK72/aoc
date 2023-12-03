@@ -85,19 +85,35 @@ fn possible_set(set: &GameSet) -> bool {
         && set.red <= 12;
 }
 
+fn fewest_possible_set(sets: Vec<GameSet>) -> GameSet {
+    let mut ret = GameSet{ blue: 0, red: 0, green: 0 };
+
+    for set in sets {
+        ret.red = set.red.max(ret.red);
+        ret.green = set.green.max(ret.green);
+        ret.blue = set.blue.max(ret.blue);
+    }
+
+    return ret;
+}
+
 pub fn run() {
     let data = fs::read_to_string("res/day2.txt").unwrap();
 
     let sum: i32 = data.lines()
         .into_iter()
         .map(|line| process_line(line))
-        .filter(|game| {
-            return game.sets
-                .iter()
-                .filter(|set| !possible_set(set))
-                .count() == 0;
+        // .filter(|game| {
+            // return game.sets
+                // .iter()
+                // .filter(|set| !possible_set(set))
+                // .count() == 0;
+        // })
+        .map(|game| {
+            let x = fewest_possible_set(game.sets);
+            return x.blue * x.green * x.red;
         })
-        .map(|game| game.id)
+        // .map(|game| game.id)
         .sum();
 
     println!("Day 2 - {}", sum);
@@ -113,8 +129,8 @@ mod tests {
         assert_eq!(
             parse_cubes(input),
             vec![
-                Cubes { colour: Colour::BLUE, number: 3 },
-                Cubes { colour: Colour::RED , number: 4 },
+                Cubes{ colour: Colour::BLUE, number: 3 },
+                Cubes{ colour: Colour::RED , number: 4 },
             ]
         );
     }
@@ -132,5 +148,16 @@ mod tests {
 
         };
         assert_eq!(process_line(input), game);
+    }
+
+    #[test]
+    fn fewest_possible_test() {
+        let input = vec![
+            GameSet{ blue: 3, red: 4, green: 0 },
+            GameSet{ blue: 6, red: 1, green: 2 },
+            GameSet{ blue: 0, red: 0, green: 2 }
+        ];
+
+        assert_eq!(fewest_possible_set(input), GameSet{ blue: 6, red: 4, green: 2 });
     }
 }
