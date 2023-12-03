@@ -29,5 +29,5 @@ pub fn run() {
 
     let xs = data.lines().into_iter().map(|line| process_line(line).parse::<i32>().unwrap());
     let sum : i32 = xs.sum();
-    println!("Sum: {}", sum);
+    println!("Day 1 - {}", sum);
 }
